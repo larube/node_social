@@ -2,6 +2,15 @@ module.exports = function(config, mongoose, nodemailer){
 
 	var crypto = require ('crypto');
 
+
+	var Status = new mongoose.Schema({
+		name: {
+			first: 	{ type: String },
+			last: 	{ type: String }
+		},
+		status: {type: String }
+	});
+
 	var AccountSchema = new mongoose.Schema({
 		email 		: {type: String, unique : true}, 
 		password 	: {type: String},
@@ -15,7 +24,9 @@ module.exports = function(config, mongoose, nodemailer){
 					day 	: {type : Number , min:1800} 
 				 },
 		photoUrl 	: {type: String},
-		biography 	: {type: String}
+		biography 	: {type: String},
+		status 		:[Status],
+		activity 	:[Status]
 	});
 
 	var Account = mongoose.model('Account', AccountSchema);
@@ -93,7 +104,15 @@ module.exports = function(config, mongoose, nodemailer){
 		console.log('Save command triggered');
 	};
 
+	var findById = function(id, callback){
+		Account.findOne({_id : id}, function(err, doc){
+			console.log(doc);
+			callback(doc);
+		});
+	}
+
 	return {
+		findById 		: findById,
 		register  		: register,
 		forgotPassword 	: forgotPassword,
 		changePassword 	: changePassword,
